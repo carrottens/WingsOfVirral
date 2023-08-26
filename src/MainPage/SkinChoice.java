@@ -10,7 +10,19 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class SkinChoice implements ActionListener {
+/**
+ * @author: Viltene
+ * @version: last time updated on 23/08/18
+ * 
+ * Implements action listener which allows the player choose the look they prefer.
+ * Generally, it only has impact on textures and music.
+ * Works on top of MainPage window.
+ * Allows getting back to the main menu (MainPage).
+ * 
+ * When the choice is made passes down mainPage parameters and the choice to GUI
+ */
+public class SkinChoice implements ActionListener 
+{
     private static JFrame startF = new JFrame(); // Create frame of Start.
     private JPanel startP = new JPanel();// Create page of Start.
     private JButton wooden = new JButton("<html><center>"+"Silverwood"+"<br>"+"Manor"+"</center></html>"); // Create back button.
@@ -18,10 +30,15 @@ public class SkinChoice implements ActionListener {
     private JButton back = new JButton("<html><center>"+ "BACK" +"</center></html>"); // Create back button.
     private JFrame menu = new JFrame();
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private Music menuMusic;
-    private Music mansonMusic;
-    private Music labMusic;
+    private Music menuMusic; // main menu music is passed down from MainPage
+    private Music mansonMusic; // Silverwood Manor music
+    private Music labMusic; // Laboratory music
 
+    /**
+     * Constructor for SkinChoice
+     * @param mainMenu JFrame that has been initiallised in MainPage
+     * @param m music of the main menu
+     */
     public SkinChoice(JFrame mainMenu, Music m) {
         startP = new JPanel() {
             protected void paintComponent(Graphics g) {
@@ -36,12 +53,15 @@ public class SkinChoice implements ActionListener {
         mansonMusic = new Music();
         labMusic = new Music();
         try {
-            mansonMusic.openFromFile(Paths.get("Music/mansion.wav"));
-            labMusic.openFromFile(Paths.get("Music/snowy.wav"));
+            mansonMusic.openFromFile(Paths.get("Music/mansion.wav")); //define mansion music
+            labMusic.openFromFile(Paths.get("Music/snowy.wav")); // define laboratory music
         } catch (IOException e){
             e.printStackTrace();
         }
+        menuMusic.setVolume(25);
+        menuMusic.setLoop(true);
         menuMusic.play();
+
         startF.setContentPane(startP); // Add the page into frame.
         startF.setUndecorated(true); // Let window has no border and cannot be moved.
         startP.setLayout(null); // Decide layout.
@@ -54,7 +74,6 @@ public class SkinChoice implements ActionListener {
         startF.setVisible(true); // Let window visible.
         ImageIcon icon = new ImageIcon("ArtAssets/artTest.png");
         startF.setIconImage(icon.getImage());
-
 
         back.setBounds(0, 600, 100, 40); // Give quit button xposition,yposition,length,and wide.
         back.setContentAreaFilled(false);
@@ -84,8 +103,13 @@ public class SkinChoice implements ActionListener {
         wooden.addActionListener(this); // Let exit button can be actionPerformed.
     }
 
+    /**
+     * Implementation of the action listener interface.
+     *  @param e action event
+    */
+    /* Depending on the player's choice pass their choice to the GUI */
     public void actionPerformed(ActionEvent e) {
-        // The effect when the start button is clicked.
+        // The effect when laoratory is chosen
         if (e.getSource() == mountains) {
             startF.setVisible(false); // Let window invisible.
             startF.dispose(); // Destroy window
@@ -93,6 +117,7 @@ public class SkinChoice implements ActionListener {
             GUI mainStuff = new GUI(1, menu, menuMusic, labMusic);
         }
 
+        // The effect when mansion is chosen
         if (e.getSource() == wooden) {
             startF.setVisible(false); // Let window invisible.
             startF.dispose(); // Destroy window
@@ -100,6 +125,7 @@ public class SkinChoice implements ActionListener {
             GUI mainStuff = new GUI(0, menu, menuMusic, mansonMusic);
         }
 
+        // The effect if back 'button' is pressed
         if (e.getSource() == back) {
             startF.setVisible(false); // Let window invisible.
             startF.dispose(); // Destroy window
