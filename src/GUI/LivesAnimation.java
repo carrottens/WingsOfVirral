@@ -6,20 +6,27 @@ import org.jsfml.system.Vector2f;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+/**
+ * @author: Viltene
+ * This class is responsible for player lives representation animation
+ * It is used in GUI
+ */
 public class LivesAnimation
 {
+    /* Initialisation */
     private RenderWindow window;
     private RectangleShape nixieClock;
     private Image images [] = new Image [6];
     private Texture textures[] = new Texture [6];
-    private int currentText;
+    private int currentTexture;
 
     public LivesAnimation(RenderWindow window)
     {
-        this.window = window;
+        this.window = window; //takes from GUI
         Vector2f v = new Vector2f (122, 40);
         nixieClock = new RectangleShape(v);
-        nixieClock.setPosition(0, 0);
+        nixieClock.setPosition(60, 0);
+        /* Loads images */
         for (int i = 0; i < 6; i++)
         {
             images[i] = new Image();
@@ -35,6 +42,7 @@ public class LivesAnimation
         }catch(IOException ex) {
             ex.printStackTrace();
         }
+        /* Makes the images into textures */
         try{
             for(int i = 0; i < 6; i++)
             {
@@ -43,30 +51,40 @@ public class LivesAnimation
         }catch (TextureCreationException ex){
             ex.printStackTrace();
         }
+        /* set primary texture */
         nixieClock.setTexture(textures[0]);
-        currentText = 0;
+        currentTexture = 0;
     }
 
+    /**
+     * Applies appropriate texture if a life is lost
+     */
     public void changeTextureLostALife()
     {
-        if(currentText < 5)
+        if(currentTexture < 5)
         {
-            currentText++;
-            nixieClock.setTexture(textures[currentText]);
+            currentTexture++;
+            nixieClock.setTexture(textures[currentTexture]);
         }
 
     }
 
+    /**
+     * Applies appropriate texture if life is gained
+     */
     public void changeTextureGainedALife()
     {
-        if(currentText - 1 >= 0)
+        if(currentTexture - 1 >= 0)
         {
-            currentText = currentText - 1;
-            nixieClock.setTexture(textures[currentText]);
+            currentTexture = currentTexture - 1;
+            nixieClock.setTexture(textures[currentTexture]);
         }
 
     }
 
+    /**
+     * Redraws the representation of the nixie clock
+     */
     public void redraw()
     {
         window.draw(nixieClock);
