@@ -1,90 +1,262 @@
 package Boss;
 
-import org.jsfml.graphics.Color;
+import java.util.Random;
+
 import org.jsfml.graphics.RectangleShape;
-import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Vector2f;
 
 /**
- * @author: Yujie Chen
- * @edited: Viltene Cibirkaite
- * @date: 21-02-12
- * @version: 1.2.0
+ * @author: Yujie
+ * @author: Viltene
+ * @version: 21-02-12, last updated on 23-08-26
+ * This is a class that describes basic functionality of a boss.
+ * This is further extended in classes BossOne and BossTwo 
  */
 public abstract class Boss {
-    private double life;
-    private double damage;
-    private double positionX;
-    private double positionY;
-    private boolean isHurt = false;
-    private RectangleShape boss;
-    private RectangleShape bullet;
+    
+    /* Basic boss parameters */
+    protected int life = 3;
+    protected int positionX = 850;
+    protected int positionY = 320;
+    protected int speed = 10;
+    protected int widthOfSprite = 100;
+    protected int heightOfSprite = 100;
+    
+    /* Representation */
+    protected RectangleShape boss;    
 
-    public RectangleShape createABoss(int a, int b, float x, float y) {
+    /* Random decision making variables */
+    protected int decide = 0;
+    protected Random random = new Random();
+
+    /* State tracking variables */
+    protected boolean isHurt = false;
+    protected boolean right = false;
+    protected boolean shooting = false;
+    protected boolean hurting = false;
+    protected boolean victory = false;
+
+    /**
+     * Creates a boss using given parameters
+     * @param a width
+     * @param b height
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return boss representation without any texture
+     */
+    public RectangleShape createABoss(int a, int b, int x, int y) {
         Vector2f v = new Vector2f(a, b);
         boss = new RectangleShape(v);
         boss.setPosition(x, y);
-        boss.setFillColor(Color.RED);
         return boss;
     }
 
-    public RectangleShape createBullet(int a, int b, float x, float y) {
-        Vector2f v = new Vector2f(a, b);
-        bullet = new RectangleShape(v);
-        bullet.setPosition(x, y);
-        bullet.setFillColor(Color.RED);
-        return bullet;
-    }
-
+    /**
+     * Redraws the boss
+     * @param window
+     */
     public void redraw(RenderWindow window) {
         window.draw(boss);
-        // window.draw(bullet);
     }
 
-    public abstract void shoot(float x, float y);
+    /**
+     * Abstract method for shooting.
+     * Implemented in BossOne and BossTwo
+     */
+    public abstract void shoot();
 
-    public abstract void move(int playerX, int playerY);
-
-    public abstract void returnedBlood();
-
-    public void setIsHurt(boolean hurt) {
-        isHurt = hurt;
-    }
-
-    public void setPositionX(double positionX) {
+    /**
+     * Setter for x coordinate of the boss
+     * @param positionX x coordinate of the boss
+     */
+    public void setPositionX(int positionX) {
         this.positionX = positionX;
     }
 
-    public void setPositionY(double positionY) {
+    /**
+     * Setter for the y coordinate of the boss 
+     * @param positionY
+    */
+    public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
 
-    public void setLife(double life) {
-        this.life = life;
-    }
-
-    public void setDamage(double damage) {
-        this.damage = damage;
-    }
-
-    public boolean getIsHurt() {
-        return isHurt;
-    }
-
-    public double getLife() {
-        return life;
-    }
-
-    public double getDamage() {
-        return damage;
-    }
-
-    public double getPositionX() {
+    /**
+     * Getter of the x coordinate of the boss
+     * @return x coordinate of the boss
+     */
+    public int getPositionX() {
         return positionX;
     }
 
-    public double getPositionY() {
+    /**
+     * Getter of the y coordinate of the boss
+     * @return y coordinate of the boss
+     */
+    public int getPositionY() {
         return positionY;
     }
+
+    /**
+     * Getter of the ending x coordinate of the boss sprite
+     * @return the right-most x coordinate of the boss sprite
+    */
+    public int getGlobalX()
+    {
+        return positionX+widthOfSprite;
+    }
+
+    /**
+     * Getter of the ending y coordinate of the boss sprite
+     * @return the top-most y coordinate of the boss sprite
+    */
+    public int getGlobalY()
+    {
+        return positionY+heightOfSprite;
+    }
+
+    /**
+     * Getter if the victory has been achieved
+     * @return true = victory || false = game has not been won yet
+     */
+    public boolean checkIfWon()
+    {
+        return victory;
+    }
+
+    /**
+     * Implementation of random behaviour of the boss
+     */
+    public void move() {
+        shoot();
+        /* If boss is not shooting or getting hurt it moves */
+        if(!shooting && !hurting)
+        {
+            int r = random.nextInt(3);
+            if (r == 0 || r == 2) {
+                if (decide == 0) {
+                    if (positionX < 300) {
+                        positionX += speed;
+                        right = true;
+                    } else if (positionX >= 300 && positionX <= 1000) {
+                        positionX += speed;
+                        right = true;
+                    } else if (positionX > 1000) {
+                        positionX -= speed;
+                        decide = 1;
+                        right = false;
+                    }
+                } else if (decide == 1) {
+                    if (positionX < 300) {
+                        positionX += speed;
+                        decide = 0;
+                        right = true;
+                    } else if (positionX >= 300 && positionX <= 1000) {
+                        positionX -= speed;
+                        right = false; 
+                    }
+                }
+            } else if (r == 1) {
+                if (decide == 0) {
+                    if (positionY < 20) {
+                        positionY += speed;
+                    } else if (positionY > 600) {
+                        positionY -= speed;
+                        decide = 1;
+                    } else if (positionY >= 20 && positionY <= 600) {
+                        positionY += speed;
+                    }
+                } else if (decide == 1) {
+                    if (positionY < 20) {
+                        positionY += speed;
+                        decide = 0;
+                    } else if (positionY > 600) {
+                        positionY -= speed;
+                    } else if (positionY >= 20 && positionY <= 600) {
+                        positionY -= speed;
+                    }
+                }
+            }
+            boss.setPosition(positionX, positionY);
+            animation();
+            }
+        else
+        {
+            if(hurting)
+            {
+                hurtingAnimation();
+            }
+        }
+    }
+
+    /**
+     * Animation for idle/moving state
+     * Implemented in BossOne and BossTwo
+     */
+    public abstract void animation();
+
+    /**
+     * Animation when boss is getting hurt
+     * Implemented in BossOne and BossTwo
+     */
+    public abstract void hurtingAnimation();
+
+    /**
+     * Logic when a boss loses a life
+     */
+    public void looseALife()
+    {
+        life--;
+        hurting = true; //enable animation
+        /* Rendomly set bosses position */
+        setPositionX(random.nextInt(1000));
+        setPositionY(random.nextInt(600));
+        if(life==0)
+        {
+            victory = true; //win if boss runs out of lives
+        }
+    }
+
+    /**
+     * Halves boss' speed
+     * This is used to implement slowmotion
+     */
+    public void halfSpeed()
+    {
+        speed = speed/2;
+    }
+
+    /**
+     * Resets the boss' speed back to normal
+     * Used when slowmotion is no longer in effect
+     */
+    public void resetSpeed()
+    {
+        speed = speed*2;
+    }
+
+    /**
+     * Getter of lives of the boss
+     * @return number of boss' lives
+     */
+    public int getNumberOfLives()
+    {
+        return life;
+    }
+
+    /**
+     * Getter of the state hurting
+     * @return true = boss is getting hurt || false = boss is not hurting
+     */
+    public boolean getHurt()
+    {
+        return hurting;
+    }
+
+    /**
+     * Abstract getter of the shooting state
+     * @return true = currently shooting || false = currently not shooting
+     */
+    public abstract boolean getShooting();
 }
