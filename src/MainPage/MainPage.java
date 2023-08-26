@@ -10,13 +10,18 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 /**
- * The Start page.
+ * @author: Yujie 
+ * @author: Viltene
+ * @version: 21/01/18, last time updated on 23/08/18
  * 
- * @author: Yujie Chen
- * @date: 21-01-18
- * @version: 1.0.0
+ * This class is responsoble for Main Menu made with Java Swing.
+ * It implements Action Listener for its three buttons:
+ * 1. START - leads to SkinChoice screen
+ * 2. INSTRUCTIONS - leads to SettingPage where instructions can be found
+ * 3. QUIT - closes the window
  */
 public class MainPage implements ActionListener {
+
     private static JFrame startF = new JFrame(); // Create frame of Start.
     private JPanel startP;// Create page of Start.
     private JButton play = new JButton("START"); // Create start button.
@@ -28,6 +33,7 @@ public class MainPage implements ActionListener {
 
 
     public MainPage() {
+        /* Setting the background */
         startP = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -82,23 +88,28 @@ public class MainPage implements ActionListener {
         startF.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close all frame when clicked the close button.
         startF.setVisible(true); // Let window visible.
 
+        /* Music parameters */
         menuMusic = new Music();
         try {
             menuMusic.openFromFile(Paths.get("Music/menuMusic.wav"));
         } catch (IOException e){
             e.printStackTrace();
         }
+        menuMusic.setVolume(25);
+        menuMusic.setLoop(true);
         menuMusic.play();
     }
 
     /**
-     * Design click button.
-     */
+     * Implementation of the action listener interface.
+     *  @param e action event
+    */
     public void actionPerformed(ActionEvent e) {
+        
         // The effect when the start button is clicked.
         if (e.getSource() == play) {
             startF.setVisible(false); // Let window invisible.\
-            SkinChoice sch = new SkinChoice(startF, menuMusic);
+            SkinChoice sch = new SkinChoice(startF, menuMusic); // call the skin choice
         }
 
         // The effect when the exit button is clicked.
@@ -110,7 +121,7 @@ public class MainPage implements ActionListener {
 
         else if (e.getSource() == setting) {
             startF.setVisible(false); // Let window invisible.
-            SettingPage controls = new SettingPage(startF);
+            SettingPage controls = new SettingPage(startF); // call the settings
             }
 
     }
