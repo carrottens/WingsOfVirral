@@ -12,10 +12,12 @@ p.s. White spaces do not count and enters are placed to make sets of platforms m
  3 - a filler platform
  4 - decoration (to come...)
 
-**type 0: 0 - up, 1 - left, 2 - down, 3 - right.
+**type 0: 1 - up, 2 - left, 3 - down, 4 - right.
   type 1: for clarity always written as 0 but is not affected because it has only one texture.
-  type 2: 0 - right, 1 - left.
-  type 3: for clarity always written as 0 but is not affected because it has only one texture.
+  type 2: 1 - right, 2 - left.
+  type 3: for clarity always written as 1 but is not affected because it has only one texture.
   type 4: to come...
+
+window resolution 1280 x 720
 
   
